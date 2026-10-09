@@ -84,6 +84,10 @@
 
   /* ---------- cards ---------- */
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr)); gap: 20px; }
+  .grid .grp { grid-column: 1 / -1; margin: 22px 0 -6px; padding-bottom: 8px; border-bottom: 1px solid var(--line);
+         font-size: 15px; letter-spacing: .8px; text-transform: uppercase; color: var(--cat); display: flex; align-items: baseline; gap: 10px; }
+  .grid .grp:first-child { margin-top: 0; }
+  .grid .grp span { color: var(--ink-3); font-size: 13px; letter-spacing: 0; }
   .card {
     background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
     display: flex; flex-direction: column; min-width: 0;
@@ -104,7 +108,7 @@
   .card .man { font-size: 13px; font-weight: 700; text-decoration: none; color: var(--ink); background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; }
   .card .man:hover { border-color: var(--accent-2); color: var(--accent-2); }
   .card .acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
-  .card[hidden] { display: none; }
+  .card[hidden], .grp[hidden] { display: none; }
 
   /* ---------- install ---------- */
   .install { padding: 48px 0; border-top: 1px solid var(--line); }
@@ -343,8 +347,18 @@ document.querySelector(".js-count").textContent = P.length;
 
 const grid = document.querySelector(".grid");
 const esc = s => s;      // descriptions are written here, not user input
+// grouped by type (in CATS order), A - Z within each group, with a heading per group
+const ORDER = Object.keys(CATS);
+P.sort((a, b) => ORDER.indexOf(a[2]) - ORDER.indexOf(b[2]) || a[0].localeCompare(b[0], "en", { numeric: true, sensitivity: "base" }));
+let lastCat = "";
 for (const [name, file, cat, desc, hl] of P) {
   const c = CATS[cat];
+  if (cat !== lastCat) {
+    const h = document.createElement("h2");
+    h.className = "grp"; h.dataset.cat = cat; h.style.setProperty("--cat", c.col);
+    h.innerHTML = `${c.name}<span>${P.filter(p => p[2] === cat).length}</span>`;
+    grid.appendChild(h); lastCat = cat;
+  }
   const el = document.createElement("article");
   el.className = "card"; el.dataset.cat = cat; el.style.setProperty("--cat", c.col);
   el.innerHTML =
@@ -368,7 +382,7 @@ for (const k of keys) {
   b.innerHTML = `${k === "all" ? "All" : CATS[k].name}<span>${n}</span>`;
   b.addEventListener("click", () => {
     bar.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
-    grid.querySelectorAll(".card").forEach(card => card.hidden = !(k === "all" || card.dataset.cat === k));
+    grid.querySelectorAll(".card, .grp").forEach(el => el.hidden = !(k === "all" || el.dataset.cat === k));
   });
   bar.appendChild(b);
 }
