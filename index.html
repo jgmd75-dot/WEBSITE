@@ -103,6 +103,7 @@
   .card .file { font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace; color: var(--ink-3); }
   .card .man { font-size: 13px; font-weight: 700; text-decoration: none; color: var(--ink); background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; }
   .card .man:hover { border-color: var(--accent-2); color: var(--accent-2); }
+  .card .acts { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
   .card[hidden] { display: none; }
 
   /* ---------- install ---------- */
@@ -143,9 +144,8 @@
     <div class="brand">GFX <small>GARDEN FX</small></div>
     <nav>
       <a href="#range">The range</a>
-      <a href="#install">Install</a>
+      <a href="#install">How to install</a>
       <a href="glance/index.html">At a glance</a>
-      <a href="manual/index.html">Manuals</a>
       <a class="js-repo" href="#">GitHub</a>
     </nav>
   </div>
@@ -219,8 +219,8 @@
 // Where the download and repository links point (change these when you publish a release)
 const REPO = "https://github.com/jgmd75-dot/GFX-II";
 const ZIP = REPO + "/archive/refs/heads/main.zip";
-// plug-ins with a manual page so far (the Manual button shows only for these)
-const MANUALS = ["gfx-cassette-4", "gfx-flanger", "gfx-m-sum", "gfx-tandem"];
+// single-plug-in downloads come straight from the repository
+const RAW = "https://raw.githubusercontent.com/jgmd75-dot/GFX-II/main/";
 
 const CATS = {
   inst:  { name: "Instruments",       col: "#6fcb7a" },
@@ -265,7 +265,7 @@ const P = [
   ["Head", "gfx-head", "amp", "A one-knob tape saturator with level-matched drive and three voices, tape pre- and de-emphasis, head bump and a tight low end. 2x oversampled.", ["tape saturation", "level-matched", "3 voices"]],
   ["Grunt", "gfx-grunt", "amp", "A warm drive stage: the sub band bypasses the drive, a cubic waveshaper adds weight and a dynamic dip at 330 Hz keeps it clear. Sunrise-orange faceplate.", ["sub bypass", "grunt shaping", "dynamic mid dip"]],
   ["Model 15", "gfx-model-15", "amp", "A cassette-multitracker channel in the spirit of the early-80s portable four-tracks: a low-voltage preamp that clips early, a broad tone stage, sluggish tape saturation and an open, breathing hiss.", ["portable 4-track", "tape saturation", "hiss"]],
-  ["Model 44", "gfx-model-44", "amp", "The early-90s rack portastudio channel: a cleaner high-headroom preamp, a tighter semi-parametric EQ, dense tape saturation with normal / double speed and gentler noise reduction.", ["rack portastudio", "semi-parametric EQ", "2 speeds"]],
+  ["Model 44", "gfx-model-44", "amp", "The early-90s rack portable studio channel: a cleaner high-headroom preamp, a tighter semi-parametric EQ, dense tape saturation with normal / double speed and gentler noise reduction.", ["rack portable studio", "semi-parametric EQ", "2 speeds"]],
   ["PenguinDrive", "gfx-penguindrive", "amp", "A guitar chain after a 70s live rig: a resonant envelope filter, a four-stage phaser, an asymmetric valve drive and an optical compressor at the end.", ["envelope filter", "phaser + drive", "opto comp"]],
   ["TS-7", "gfx-ts7", "amp", "An analogue tape simulator and compressor in one rack unit: oversampled transformer iron, an HF tape tamer and a compressor with mix. Drift is an uneven supply under the iron.", ["tape + iron", "HF tamer", "compressor"]],
   // dynamics
@@ -354,7 +354,7 @@ for (const [name, file, cat, desc, hl] of P) {
        <h3>${name}<span class="tag">${c.name}</span></h3>
        <p>${esc(desc)}</p>
        <ul>${hl.map(h => `<li>${h}</li>`).join("")}</ul>
-       <div class="foot"><span class="file">${file}.jsfx</span>${MANUALS.includes(file) ? `<a class="man" href="manual/${file}.html">Manual</a>` : ""}</div>
+       <div class="foot"><span class="file">${file}.jsfx</span><span class="acts"><a class="man" href="manual/${file}.pdf" target="_blank" rel="noopener">Manual PDF</a><a class="man js-dl" href="${RAW}${file}.jsfx" data-file="${file}.jsfx">Download</a></span></div>
      </div>`;
   grid.appendChild(el);
 }
@@ -393,6 +393,20 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") lb.classList
     "floating-chat.donateButton.background-color": "#5bc0de",
     "floating-chat.donateButton.text-color": "#323842"
   });
+</script>
+<script>
+// single-plug-in downloads: fetch the .jsfx from GitHub and save it (falls back to opening the raw file)
+document.addEventListener("click", async e => {
+  const a = e.target.closest("a.js-dl"); if (!a) return;
+  e.preventDefault();
+  try {
+    const r = await fetch(a.href); if (!r.ok) throw new Error(r.status);
+    const u = URL.createObjectURL(await r.blob());
+    const t = document.createElement("a"); t.href = u; t.download = a.dataset.file;
+    document.body.appendChild(t); t.click(); t.remove();
+    setTimeout(() => URL.revokeObjectURL(u), 2000);
+  } catch (err) { window.open(a.href, "_blank", "noopener"); }
+});
 </script>
 </body>
 </html>
