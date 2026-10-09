@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GFX Plugins</title>
+<meta name="description" content="GFX (Garden FX): a range of instruments, drum machines, amps and effects for REAPER, written in JSFX. Every sound is synthesized - no samples.">
+<style>
+  :root {
+    --bg: #0e0f11;
+    --panel: #1b1d21;
+    --panel-2: #23262b;
+    --line: #2f3238;
+    --ink: #e9e7e2;
+    --ink-2: #b4b2ad;
+    --ink-3: #85837e;
+    --accent: #e0603a;
+    --accent-2: #e8b23a;
+    --radius: 10px;
+    --gutter: 16px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.55 "Trebuchet MS", "Segoe UI", system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent-2); }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 var(--gutter); }
+
+  /* ---------- header ---------- */
+  .top {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(14, 15, 17, 0.92); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+  }
+  .top .wrap { display: flex; align-items: center; gap: 14px; height: 60px; }
+  .badge {
+    width: 34px; height: 34px; border-radius: 50%; background: var(--ink); color: var(--panel);
+    display: grid; place-items: center; font-weight: 700; font-size: 11px; letter-spacing: .5px; flex: none;
+  }
+  .brand { font-weight: 700; letter-spacing: 1px; }
+  .brand small { color: var(--ink-3); font-weight: 400; letter-spacing: .5px; margin-left: 6px; }
+  .top nav { margin-left: auto; display: flex; gap: 18px; font-size: 14px; }
+  .top nav a { color: var(--ink-2); text-decoration: none; }
+  .top nav a:hover { color: var(--ink); }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 64px 0 40px; border-bottom: 1px solid var(--line);
+    background: radial-gradient(1200px 400px at 70% -10%, rgba(224, 96, 58, 0.16), transparent 60%); }
+  .hero h1 { overflow-wrap: break-word; font-size: clamp(30px, 6vw, 56px); line-height: 1.05; margin: 0 0 16px; letter-spacing: -0.5px; }
+  .hero h1 span { color: var(--accent); }
+  .hero p.lead { font-size: clamp(17px, 2.2vw, 20px); color: var(--ink-2); max-width: 720px; margin: 0 0 28px; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 8px;
+    font-weight: 700; text-decoration: none; border: 1px solid var(--line); color: var(--ink); background: var(--panel-2);
+  }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #1a0d07; }
+  .btn:hover { filter: brightness(1.08); }
+  .support { margin: 14px 0 0; color: var(--ink-2); font-size: 15px; }
+  .support a { color: var(--accent-2); }
+  .thanks { display: none; margin: 14px 0 0; padding: 12px 14px; max-width: 640px; border: 1px solid var(--line);
+    border-left: 3px solid var(--accent-2); border-radius: var(--radius); background: var(--panel); color: var(--ink-2); font-size: 15px; }
+  .thanks.on { display: block; }
+  .thanks b { color: var(--ink); }
+  .facts { display: flex; flex-wrap: wrap; gap: 28px; margin-top: 36px; color: var(--ink-2); font-size: 14px; }
+  .facts b { display: block; font-size: 26px; color: var(--ink); }
+  .stripe { height: 3px; background: linear-gradient(90deg, #e0603a, #e8b23a, #6fcb7a, #4a9ad8, #8e7ae0); }
+
+  /* ---------- filters ---------- */
+  .range { padding: 40px 0 24px; }
+  .range h2 { margin: 0 0 6px; font-size: 28px; }
+  .range > .wrap > p { color: var(--ink-2); margin: 0 0 20px; }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+  .filters button {
+    font: inherit; font-size: 14px; color: var(--ink-2); background: var(--panel); border: 1px solid var(--line);
+    padding: 7px 14px; border-radius: 999px; cursor: pointer;
+  }
+  .filters button span { color: var(--ink-3); margin-left: 4px; }
+  .filters button[aria-pressed="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+  .filters button[aria-pressed="true"] span { color: #55534f; }
+
+  /* ---------- cards ---------- */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr)); gap: 20px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden;
+    display: flex; flex-direction: column; min-width: 0;
+  }
+  .card .shot {
+    display: block; background: #0b0c0d; aspect-ratio: 16 / 9; overflow: hidden; cursor: zoom-in; border: 0; padding: 0; width: 100%;
+  }
+  .card .shot img { width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; transition: transform .3s; }
+  .card .shot:hover img { transform: scale(1.03); }
+  .card .body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .card h3 { margin: 0; font-size: 19px; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .tag { font-size: 11px; letter-spacing: .6px; text-transform: uppercase; color: var(--cat, var(--ink-3)); white-space: nowrap; font-weight: 700; }
+  .card p { margin: 0; color: var(--ink-2); font-size: 15px; }
+  .card ul { margin: 2px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
+  .card li { font-size: 12px; color: var(--ink-2); background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px; padding: 3px 8px; }
+  .card .foot { margin-top: auto; padding-top: 8px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .card .file { font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace; color: var(--ink-3); }
+  .card .man { font-size: 13px; font-weight: 700; text-decoration: none; color: var(--ink); background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; }
+  .card .man:hover { border-color: var(--accent-2); color: var(--accent-2); }
+  .card[hidden] { display: none; }
+
+  /* ---------- install ---------- */
+  .install { padding: 48px 0; border-top: 1px solid var(--line); }
+  .install h2 { margin: 0 0 18px; font-size: 28px; }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 16px; counter-reset: s; }
+  .step { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
+  .step h3 { margin: 0 0 8px; font-size: 17px; }
+  .step h3::before { counter-increment: s; content: counter(s); display: inline-grid; place-items: center; width: 24px; height: 24px;
+    border-radius: 50%; background: var(--accent); color: #1a0d07; font-size: 13px; margin-right: 8px; }
+  .step p { margin: 0; color: var(--ink-2); font-size: 15px; }
+  code { font: 13px/1.4 ui-monospace, Menlo, Consolas, monospace; background: var(--panel-2); border: 1px solid var(--line);
+    padding: 1px 5px; border-radius: 4px; color: var(--ink); }
+  .note { margin-top: 18px; color: var(--ink-3); font-size: 14px; }
+
+  footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--ink-3); font-size: 14px; }
+
+  /* ---------- lightbox ---------- */
+  .lb { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.88); display: none; place-items: center; z-index: 50; padding: 24px; cursor: zoom-out; }
+  .lb.open { display: grid; }
+  .lb img { max-width: 100%; max-height: 82vh; border-radius: 6px; box-shadow: 0 20px 60px rgba(0,0,0,.6); }
+  .lb p { color: var(--ink-2); text-align: center; margin: 12px 0 0; }
+
+  @media (max-width: 640px) {
+    .top nav { display: none; }
+    .hero { padding: 40px 0 28px; }
+    .grid { grid-template-columns: minmax(0, 1fr); }
+    .card h3 { flex-wrap: wrap; }
+    code { overflow-wrap: anywhere; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="badge" aria-hidden="true">GFX</div>
+    <div class="brand">GFX <small>GARDEN FX</small></div>
+    <nav>
+      <a href="#range">The range</a>
+      <a href="#install">Install</a>
+      <a href="glance/index.html">At a glance</a>
+      <a href="manual/index.html">Manuals</a>
+      <a class="js-repo" href="#">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>Instruments, drum machines<br>and effects for <span>REAPER</span>.</h1>
+    <p class="lead">GFX is a range of plug-ins written in JSFX, REAPER's own effect language. Synths, drum machines, amps, compressors,
+      EQs, modulation, mastering and summing tools &mdash; every sound synthesized from scratch, with no samples to install.</p>
+    <div class="cta">
+      <a class="btn primary js-zip" href="#">Download the range (ZIP)</a>
+      <a class="btn" href="#range">Browse the plug-ins</a>
+      <a class="btn" href="#install">How to install</a>
+    </div>
+    <p class="support">GFX is free donationware. If the plug-ins earn a place in your sessions, you can
+      <a href="https://ko-fi.com/jgwizrad" target="_blank" rel="noopener">support it on Ko-fi</a>.</p>
+    <p class="thanks" role="status"><b>Thanks for downloading GFX.</b> It is free to use, in commercial music too.
+      If you would like to help keep new plug-ins coming, a small donation on
+      <a href="https://ko-fi.com/jgwizrad" target="_blank" rel="noopener">Ko-fi</a> goes a long way.</p>
+    <div class="facts">
+      <div><b class="js-count">93</b>plug-ins</div>
+      <div><b>0</b>samples &mdash; all synthesized</div>
+      <div><b>S / M / L</b>resizable panels</div>
+      <div><b>1</b>shared look and output stage</div>
+    </div>
+  </div>
+</section>
+<div class="stripe"></div>
+
+<section class="range" id="range">
+  <div class="wrap">
+    <h2>The range</h2>
+    <p>Click a panel to see it full size. Each plug-in is a single <code>.jsfx</code> file.</p>
+    <div class="filters" role="toolbar" aria-label="Filter by category"></div>
+    <div class="grid"></div>
+  </div>
+</section>
+
+<section class="install" id="install">
+  <div class="wrap">
+    <h2>Install</h2>
+    <div class="steps">
+      <div class="step"><h3>Download</h3>
+        <p>Get the ZIP from the button above (or clone the repository) and unpack it.</p></div>
+      <div class="step"><h3>Copy into REAPER</h3>
+        <p>In REAPER choose <code>Options &rsaquo; Show REAPER resource path</code>. Copy every <code>.jsfx</code> and
+          <code>.jsfx-inc</code> file into the <code>Effects</code> folder there &mdash; a subfolder such as
+          <code>Effects/GFX</code> is fine, as long as all the files sit together.</p></div>
+      <div class="step"><h3>Find them</h3>
+        <p>Open the FX browser, press <code>F5</code> to rescan, and search for <code>GFX</code>. Instruments go on a track
+          and play from MIDI; effects go on any track, bus or the master.</p></div>
+      <div class="step"><h3>Optional extras</h3>
+        <p>For MIDI export from G Deep 16 and G PCM 12, load the scripts in <code>Scripts/</code> with
+          <code>Actions &rsaquo; Load ReaScript</code>. G Pulse reads pattern files from <code>Data/gfx-drum-patterns</code>
+          (copy that folder into REAPER's <code>Data</code> folder).</p></div>
+    </div>
+    <p class="note">The <code>.jsfx-inc</code> files are shared parts (the panel look, the output stage and so on). The plug-ins
+      need them in the same folder.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">GFX &mdash; Garden FX, by JGWizrad. JSFX plug-ins for REAPER. Panels shown are real screenshots of each plug-in.
+    Free donationware &mdash; <a href="https://ko-fi.com/jgwizrad" target="_blank" rel="noopener">support GFX on Ko-fi</a>.</div>
+</footer>
+
+<div class="lb" role="dialog" aria-modal="true" aria-label="Panel"><div><img alt=""><p></p></div></div>
+
+<script>
+// Where the download and repository links point (change these when you publish a release)
+const REPO = "https://github.com/jgmd75-dot/GFX-II";
+const ZIP = REPO + "/archive/refs/heads/main.zip";
+// plug-ins with a manual page so far (the Manual button shows only for these)
+const MANUALS = ["gfx-cassette-4", "gfx-flanger", "gfx-m-sum", "gfx-tandem"];
+
+const CATS = {
+  inst:  { name: "Instruments",       col: "#6fcb7a" },
+  drum:  { name: "Drum machines",     col: "#e0603a" },
+  amp:   { name: "Amps & drive",      col: "#e8b23a" },
+  dyn:   { name: "Dynamics",          col: "#4a9ad8" },
+  eq:    { name: "EQ & filters",      col: "#4fb8b0" },
+  mod:   { name: "Modulation & space", col: "#8e7ae0" },
+  mast:  { name: "Mastering",         col: "#d070b8" },
+  sum:   { name: "Summing",           col: "#c8a060" },
+};
+
+// name, file (without .jsfx), category, description, highlights
+const P = [
+  // instruments
+  ["G Lab80", "gfx-g-lab80", "inst", "A late-80s digital workstation in one panel: pick a sound and play. Pianos, organs, strings, brass, pads, plucked guitars and more, with reverb and chorus built in.", ["43 sounds", "macro controls", "reverb"]],
+  ["G Lead 8", "gfx-g-lead-8", "inst", "An 8-voice analogue-style polysynth for leads and chords: two oscillators, a 24 dB ladder filter with its own envelope, an LFO and a built-in arpeggiator.", ["8 voices", "ladder filter", "arpeggiator"]],
+  ["G Bass 1X", "gfx-g-bass-1x", "inst", "A monophonic bass synth with sub oscillator, detune and unison, three filter types (warm, acid and clean) and accent and glide for squelchy sequences.", ["mono", "3 filters", "accent + glide"]],
+  ["G Cosmos", "gfx-g-cosmos", "inst", "A lush 8-voice pad synth in the spirit of the classic 80s polys, with a detuned layer for shimmer, a bucket-brigade chorus and an ambient stereo delay.", ["pads", "chorus I / II", "ambient delay"]],
+  ["G Glow", "gfx-g-glow", "inst", "An additive synth built from harmonic partials that you draw on screen. Two paths per voice, modern clean or vintage 8-bit oscillators, cross-modulation, two LFOs and a dual delay.", ["16 / 32 / 64 partials", "8-bit vintage mode", "15 patches"]],
+  ["G Chip 48", "gfx-g-chip", "inst", "Chiptune sounds from the 8-bit home computers and early consoles: one-bit beeper, three-voice square chips, four-operator FM and the 8-bit console pulse and triangle, with tracker-style arps.", ["5 sound chips", "41 patches", "tracker arps"]],
+  ["G Voce 90", "gfx-g-voce-90", "inst", "A half-rack electric piano module: tine and reed pianos, a sticky-reed pluck, clav and a buzzy electric keyboard, through drive, tremolo, chorus and an auto-wah.", ["5 keyboard voices", "tremolo + chorus", "auto-wah"]],
+  ["G Ensemble", "gfx-g-ensemble", "inst", "A string machine with divide-down oscillators, so every key can sound at once, four registers and the classic three-phase ensemble swirl.", ["fully polyphonic", "4 registers", "ensemble"]],
+  ["G Tonewheel", "gfx-g-tonewheel", "inst", "A tonewheel organ with 91 spinning wheels, nine drawbars, percussion, key click and scanner vibrato / chorus. Pair it with GFX Rotary for the full cabinet sound.", ["9 drawbars", "percussion", "scanner vibrato"]],
+  ["G Arp", "gfx-g-arpeggiator", "inst", "A MIDI arpeggiator to place before any synth: tempo-locked modes, a step row with accents and ties, per-step levels and a human FEEL that loosens the timing.", ["MIDI tool", "step pattern", "feel"]],
+  ["G Harbour Keys", "gfx-g-harbour-keys", "inst", "An early-90s rompler piano built on the G Piano physical model, with an FM bell layer on every key, ROM-style sample-rate and bit reduction, a tape deck, a mod rack and an 80s space.", ["physical-model core", "FM bell", "ROM grit"]],
+  ["G M1K", "gfx-g-m1k", "inst", "A six-voice analogue rack synth in the spirit of the late-80s matrix-modulation modules: two DCOs, a 24 dB filter, a patch browser and full editor, and the Mod Rack built into every patch. Black or cream faceplate.", ["6 voices", "patch browser", "Mod Rack per patch"]],
+  ["G Mallets", "gfx-g-mallets", "inst", "Tuned percussion by modal synthesis: marimba, vibes, glock, xylophone, celesta, kalimba, steel pan, tubular bells and electric grand, with mallet hardness, a resonator and its own filter and amp envelopes.", ["9 models", "modal synthesis", "filter + amp env"]],
+  ["G Piano", "gfx-g-piano", "inst", "A physically modelled acoustic piano: a felt hammer simulated against waveguide strings, soundboard and sympathetic coupling, grand or upright. No samples.", ["physical model", "grand / upright", "soft pedal"]],
+  ["G Pocket 70", "gfx-g-pocket-70", "inst", "A late-90s sound module, one sound at a time: 90 synthesized patches in ten groups, from pianos and pads to basses and a GM drum kit, each with its own Mod Rack and reverb, and filter and amp envelopes to edit.", ["90 patches", "Mod Rack + reverb", "ADSR edit"]],
+  ["G Rainbow", "gfx-g-rainbow", "inst", "A drone organ after the 60s modified-organ and tape-loop pieces: two oscillator ranks per voice at modal intervals, a ladder filter and a two-deck time-lag tape-loop delay.", ["8 voices", "2 ranks", "time-lag delay"]],
+  ["Palette", "gfx-palette", "inst", "The sound palette for the GFX workstation: FM e-piano, clavinet, glock, synth and warm pads and more, all synthesized.", ["workstation sounds", "FM + physical", "pads"]],
+  // drum machines
+  ["G Pulse", "gfx-g-pulse", "drum", "A synthesis drum machine with eight voices and four character models for the whole kit (analogue, FM, physical modelling and digital), a 32-step sequencer with per-row lengths and a bus compressor.", ["4 models", "32 steps, polyrhythm", "8 patterns"]],
+  ["G Deep 16", "gfx-g-deep", "drum", "A deep house drum machine: synthesized kick, snare, clap, hats and rim shot through a full drum-bus chain of compressor, EQ, saturation and reverb, with a 16-step sequencer and MIDI export.", ["6 voices", "bus FX chain", "MIDI export"]],
+  ["G PCM 12", "gfx-g-pcm12", "drum", "A 12-bit PCM drum machine in the spirit of the big mid-80s digital rhythm programmers: 24 sounds built at load, 12 pads with pitch, envelope, bend and reverse, and a pattern sequencer.", ["24 sounds, 12-bit", "reverse + bend", "8 patterns"]],
+  ["G Clockwork", "gfx-g-clockwork", "drum", "A preset-rhythm box with 32 rhythms (16 for the full kit, 16 for percussion only), variations, fills and swing, 15 analogue voices including Latin percussion, a phaser and ten kits.", ["32 rhythms", "15 voices", "phaser"]],
+  // amps & drive
+  ["Guitar Head", "gfx-guitar-head", "amp", "An all-valve guitar amp in the spirit of the classic 50-watt heads: clean and drive channels, tone stack, presence, spring reverb, a cabinet and mic, plus a gate and tuner.", ["clean / drive", "spring reverb", "2x12 / 4x12 cab"]],
+  ["Bass Head", "gfx-bass-head", "amp", "A big all-valve bass amp with an 8x10 cabinet: gain, ultra low and high, a sweepable midrange, a push-pull power stage with sag, a DI blend, gate and tuner.", ["valve bass amp", "8x10 cab", "DI blend"]],
+  ["Desert Ten", "gfx-desert-ten", "amp", "A little 10-watt solid-state practice combo with an 8-inch speaker &mdash; from clean to the raspy, fuzzy saturation heard on desert-rock records.", ["10-watt combo", "saturation switch", "8\" speaker"]],
+  ["Preamp", "gfx-preamp", "amp", "A colour preamp with four voicings &mdash; clean boost, a vibe-style low-mid weight, smooth diode breakup and single-transistor drive &mdash; plus an EQ boost and gentle sag.", ["4 voicings", "EQ boost", "sag"]],
+  ["Preamp Q", "gfx-preamp-q", "amp", "The Preamp with a four-band console channel EQ on its cream strip: HPF / LPF, shelf-or-bell ends, two swept mids with Q, brown or black voicing. ORDER puts the EQ before or after the drive; drift and master fold out with the output stages.", ["preamp + channel EQ", "EQ before or after", "fold-out drift"]],
+  ["Head", "gfx-head", "amp", "A one-knob tape saturator with level-matched drive and three voices, tape pre- and de-emphasis, head bump and a tight low end. 2x oversampled.", ["tape saturation", "level-matched", "3 voices"]],
+  ["Grunt", "gfx-grunt", "amp", "A warm drive stage: the sub band bypasses the drive, a cubic waveshaper adds weight and a dynamic dip at 330 Hz keeps it clear. Sunrise-orange faceplate.", ["sub bypass", "grunt shaping", "dynamic mid dip"]],
+  ["Model 15", "gfx-model-15", "amp", "A cassette-multitracker channel in the spirit of the early-80s portable four-tracks: a low-voltage preamp that clips early, a broad tone stage, sluggish tape saturation and an open, breathing hiss.", ["portable 4-track", "tape saturation", "hiss"]],
+  ["Model 44", "gfx-model-44", "amp", "The early-90s rack portastudio channel: a cleaner high-headroom preamp, a tighter semi-parametric EQ, dense tape saturation with normal / double speed and gentler noise reduction.", ["rack portastudio", "semi-parametric EQ", "2 speeds"]],
+  ["PenguinDrive", "gfx-penguindrive", "amp", "A guitar chain after a 70s live rig: a resonant envelope filter, a four-stage phaser, an asymmetric valve drive and an optical compressor at the end.", ["envelope filter", "phaser + drive", "opto comp"]],
+  ["TS-7", "gfx-ts7", "amp", "An analogue tape simulator and compressor in one rack unit: oversampled transformer iron, an HF tape tamer and a compressor with mix. Drift is an uneven supply under the iron.", ["tape + iron", "HF tamer", "compressor"]],
+  // dynamics
+  ["Compressor", "gfx-compressor", "dyn", "One compressor with four voicings &mdash; punchy VCA, glue bus, transparent leveller and optical &mdash; with auto timing, a side-chain high-pass or low-band split, and parallel mix.", ["VCA / bus / opto", "split mode", "parallel mix"]],
+  ["Compressor Q", "gfx-compressor-q", "dyn", "The Compressor with a four-band parametric EQ strip underneath: low cut, four bands with coloured caps, low and high shelves, high cut. EQ FIRST drives the compressor, EQ AFTER shapes its output.", ["compressor + EQ", "EQ first or after", "coloured band caps"]],
+  ["RND", "gfx-rnd", "dyn", "A half-rack duo: a clean RMS compressor with a smoothing three-stage mode, and a levelling amplifier with a two-stage optical-style release and gentle saturation.", ["2 characters", "smooth on dense mixes", "levelling amp"]],
+  ["Smooth", "gfx-smooth", "dyn", "A smooth, clean one-knob compressor with optical-style timing, a limit mode, parallel blend and a gentle valve-style colour stage.", ["one-knob", "limit mode", "parallel blend"]],
+  ["Headsmoother", "gfx-headsmoother", "dyn", "GFX Head and GFX Smooth stacked in one plug-in &mdash; tape saturation and optical compression in either order, each switchable.", ["2 units", "swap order", "shared output"]],
+  ["Quad", "gfx-quad", "dyn", "A four-band bus compressor with an EQ bell and a saturator in every band. Each band's THRESH compresses below zero or expands above it for punch, with fast or slow timing and automatic makeup. Drag the crossovers in the display; presets for common bus jobs.", ["4 bands", "compress / expand", "presets"]],
+  ["Tandem", "gfx-tandem", "dyn", "Two RMS soft-knee compressors in series on one panel: each does a little for heavy compression that still sounds open. Ratios run past infinity into negative for pumping and reverse swells; stage 1 decouples and takes an external key for ducking, stage 2 adds grit. Sidechain high-pass, parallel mix and presets.", ["2 stages in series", "negative ratios", "external key"]],
+  ["Tandem Q", "gfx-tandem-q", "dyn", "Tandem with a passive-style program EQ strip: stepped low boost and cut, two mids with narrow switches, high boost with width and a separate high cut. ORDER puts it before or after the two compressors.", ["two compressors + program EQ", "stepped frequencies", "EQ before or after"]],
+  ["Duplex", "gfx-duplex", "dyn", "A two-channel compressor, de-esser and peak limiter in the utilitarian 80s British style. Run it stereo, as two mono channels or mid/side; the de-esser can turn down just the top end, and auto timing follows the programme.", ["stereo / dual / M-S", "split de-esser", "peak limiter"]],
+  ["Duplex Q", "gfx-duplex-q", "dyn", "Duplex with a tilt EQ strip: high-pass, one-knob tilt round a movable pivot and low-pass, each with its slope, on stereo, mid or side. ORDER puts the EQ before or after the dynamics.", ["dynamics + tilt EQ", "filters 6 - 48 dB/oct", "mid / side tilt"]],
+  ["Thrust", "gfx-thrust", "dyn", "A stereo VCA bus compressor with stepped attack, ratio and release, a THRUST switch that keeps the bass from driving it, feed-forward or vintage feedback, adjustable stereo link with a link filter and twin VU meters.", ["stepped controls", "thrust", "new / old"]],
+  ["Console", "gfx-console", "dyn", "Centre-section dynamics from an 80s broadcast console: a fast, clean VCA compressor, its companion gate / expander, a peak limiter and the desk's output transformer for a little weight.", ["gate + compressor", "limiter", "output transformer"]],
+  ["Console Q", "gfx-console-q", "dyn", "Console with a four-band console channel EQ underneath: HPF / LPF, shelf-or-bell ends, two swept mids with Q and brown or black voicing. ORDER runs the EQ after the dynamics or in front of them.", ["dynamics + channel EQ", "brown / black voicing", "EQ before or after"]],
+  ["VB30", "gfx-vb30", "dyn", "An aggressive programme limiter for room mics, shouty vocals and parallel drum buses: a diode-bridge gain cell that thickens as it squashes, a capacitor-memory release that snaps back on peaks and sucks back on sustained squashing, and a FREEZE circuit that holds the gain reduction in the gaps. Gate / expander, sidechain high-pass and parallel mix.", ["diode-bridge colour", "memory release", "freeze"]],
+  ["De-Ess", "gfx-de-ess", "dyn", "A split-band or wideband de-esser: the detector listens only to the esses and turns down just that band (or the whole signal, like the classic boxes), with a listen key to tune it.", ["split / wide", "listen", "stereo-linked"]],
+  ["Gate", "gfx-gate", "dyn", "An analogue-modelled gate, expander and ducker with a keyed, filtered side-chain and MIDI triggering.", ["gate / expand / duck", "keyed side-chain", "MIDI trigger"]],
+  ["MK3", "gfx-mk3", "dyn", "A broadcast channel strip after the 1970s local-radio desks: transformer iron, a stepped high-pass, an EQ with FIZZ and a VCA compressor, with the EQ before or after.", ["channel strip", "iron + FIZZ", "EQ / comp order"]],
+  ["Transient", "gfx-transient", "dyn", "A level-independent transient shaper: more or less attack, more or less sustain, with speed and length to fit the material.", ["attack / sustain", "no threshold", "level-independent"]],
+  ["Twin Comp", "gfx-twin-comp", "dyn", "Two classic compressors in one rack, in either order: a 70s-style true-RMS VCA that runs past infinity into negative ratios, and an 80s-style program expressor.", ["2 compressors", "swap order", "negative ratios"]],
+  // EQ & filters
+  ["Equaliser", "gfx-equaliser", "eq", "A four-band parametric with proportional width, notch dives, shelves, high- and low-cut filters and stereo or mid/side operation, all draggable on its screen.", ["4 bands + filters", "mid / side", "drag on screen"]],
+  ["Surgical EQ", "gfx-surgical-eq", "eq", "Six precise parametric bands on a large curve with a live spectrum: bells, shelves, notches and cuts, band solo, mid/side and dynamic bands that move only when needed. High and low pass filters from 12 to 48 dB per octave.", ["6 bands", "live spectrum", "12-48 dB filters"]],
+  ["TransEQ", "gfx-transeq", "eq", "A hybrid program EQ: passive-style low and high ends, versatile mid bells and transformer-coupled input and output for weight and glow.", ["passive-style curves", "transformer iron", "proportional Q"]],
+  ["Baxendale", "gfx-baxendale", "eq", "A simple two-knob tone control for single tracks: broad, gentle bass and treble curves with selectable turnover points. A little goes a long way.", ["bass / treble", "gentle curves", "detented"]],
+  ["Contour", "gfx-contour", "eq", "A drawn-envelope filter: draw curves for cutoff, resonance, volume and pan that loop in time with the project for rhythmic gating and filter movement.", ["4 drawn curves", "tempo sync", "stereo offset"]],
+  ["Board EQ", "gfx-board-q", "eq", "A four-band channel EQ in the spirit of the classic British desks: shelving or bell LF and HF, two sweepable mids with Q, an 18 dB high-pass and a 12 dB low-pass. Switch between the gentle BROWN card and the punchier BLACK card, and push the line amp for a little colour.", ["4 bands + filters", "brown / black", "line amp drive"]],
+  ["Graphic EQ", "gfx-graphic-eq", "eq", "A 31-band third-octave graphic with a real-time analyser behind the faders. Draw a curve across the bands with the mouse; the bands are matched so the response follows the faders. Proportional or constant Q, +-6 / +-12 dB range, low and high cut.", ["31 bands", "live analyser", "draw a curve"]],
+  ["Tilt EQ", "gfx-tilt-eq", "eq", "One knob tilts the whole spectrum around a movable pivot, darker or brighter, with gentle or steep slopes, on stereo, mid or side. High- and low-pass filters from 6 to 48 dB per octave. Two looks: HORIZON and CLASSIC.", ["tilt + pivot", "6-48 dB filters", "mid / side"]],
+  ["Starfish", "gfx-starfish", "eq", "An automatic filter: a resonant LP / BP / HP / notch filter swept by your playing (the classic envelope quack), stepped at random in time with the project, or both. Loop a one-bar step pattern so it grooves, glide between steps, hold the filter where it is, and drive it for grit.", ["envelope filter", "sample & hold steps", "tempo sync"]],
+  ["Echofish", "gfx-echofish", "eq", "Starfish with an echo strip: the envelope and step filter, then a tape, bucket-brigade or digital echo with sync, ping-pong, freeze, wow and flutter. Filter the echoes, or move the filter over them.", ["auto filter + echo", "tape / BBD / digital", "filter before or after"]],
+  ["622", "gfx-622", "eq", "A four-band broadcast parametric EQ in the spirit of the classic 622 rack: wide, overlapping bands from 20 Hz to 20 kHz, bandwidth from a narrow notch to a broad tilt, and &plusmn;16 dB per band. Drift lets the supply voltage wander.", ["4 parametric bands", "0.1 - 4 octaves", "supply drift"]],
+  // modulation & space
+  ["Chorus", "gfx-chorus", "mod", "A bucket-brigade chorus in the 80s poly-synth style: modes I, II and I+II with the wide antiphase image and optional hiss.", ["I / II / I+II", "wide stereo", "BBD tone"]],
+  ["Phaser", "gfx-phaser", "mod", "Three phasers in one: a JFET-style phaser with or without feedback, a liquid optical phaser and through-zero tape flanging.", ["3 voicings", "through-zero flange", "sync"]],
+  ["Flanger", "gfx-flanger", "mod", "Three flangers in one: the bucket-brigade pedal for the jet sound, the clean wide-sweep studio rack, and true through-zero tape flanging. Sweep by LFO, freeze it to place the comb by hand, or let your playing drive it; positive or negative regen and stereo spread.", ["pedal / rack / thru-zero", "matrix + envelope", "regen +/-"]],
+  ["Polyvibe", "gfx-polyvibe", "mod", "A photocell vibe: four phase stages swept by a modelled bulb and light-dependent resistors for the lopsided throb, with chorus, vibrato and preamp modes.", ["bulb + LDR model", "chorus / vibrato", "preamp"]],
+  ["Rotary", "gfx-rotary", "mod", "A two-rotor rotary speaker: valve drive, horn and drum with their own speed and inertia, Doppler and swell, two mics and MIDI speed control.", ["horn + drum", "inertia", "MIDI speed switch"]],
+  ["Autopan", "gfx-autopan", "mod", "An auto-panner and tremolo that starts slow and subtle, with tempo sync, several shapes and a slow random drift of rate, depth and centre.", ["pan / tremolo", "sync", "drift"]],
+  ["Echo", "gfx-echo", "mod", "Three echoes in one &mdash; tape, bucket-brigade and digital &mdash; with tempo sync, self-oscillating feedback, filters in the loop, ping-pong, ducking, freeze and a 500 Hz cut to sit the echoes behind a vocal.", ["tape / BBD / digital", "ping-pong", "500 Hz cut"]],
+  ["E-Delay", "gfx-e-delay", "mod", "Four European studio and broadcast delays of the 80s: a crystal-clean dual delay with cross-feed, a ducking delay that blooms when you stop, an 8-tap stereo pattern delay and a pitch-loop time processor. Every parameter on its own display; tempo sync with dotted and triplet notes.", ["4 models", "ducking, multi-tap, pitch loop", "tempo sync per side"]],
+  ["J-Delay", "gfx-j-delay", "mod", "Four Japanese digital delays of the 80s: a dual-phase chorus delay, a 12-bit pitch-shift delay whose repeats climb or fall, a dark compact unit with compander breathing and a sampling delay with HOLD for loops and stutters. Big LED readout, rubber knobs, 10 to 16-bit converters.", ["4 models", "pitch cascades, sample hold", "10 / 12 / 14 / 16-bit"]],
+  ["Space", "gfx-space", "mod", "An algorithmic reverb with room, chamber, hall, plate and spring, pre-delay, damping, modulation, ducking, width and freeze, plus the classic studio trick of cutting 500 Hz and the extremes from the reverb return.", ["5 types", "500 Hz cut", "freeze"]],
+  ["E-Verb", "gfx-e-verb", "mod", "Four European broadcast reverbs of the 80s in one: a room simulator with no modulation in the tail, a warm broadcast plate and hall, a dense speech reverb and a gated / reverse processor. Every parameter on its own display, and the faceplate changes with the model.", ["4 models, 4 faceplates", "reverb time with low / high multipliers", "vintage converters"]],
+  ["J-Verb", "gfx-j-verb", "mod", "Four Japanese studio and broadcast reverbs of the 80s: a massive modular hall, a 3-D reflection engine, a 40-reflection flagship and a 12-bit pioneer. Remote-control styling, every parameter on the top level, lamp-key quick settings and a reflection dot matrix.", ["4 models, 4 faceplates", "3-D and 40-tap reflections", "12-bit 31.5 kHz mode"]],
+  ["Haas Doubler", "gfx-haas-doubler", "mod", "Short-delay stereo widening in three layouts &mdash; classic left/right, centre plus sides, or spread &mdash; with left and right detune in cents for the classic doubled-vocal width, and a gentle drift in time, pan and level.", ["Haas widening", "L / R detune", "3 layouts"]],
+  ["Mid/Side", "gfx-midside", "mod", "A mid/side processor: mid and side gain, width, bass mono, air on the sides, focus on the mid, and solo monitoring of each part.", ["width", "bass mono", "M / S solo"]],
+  ["EC-444", "gfx-Ec444", "mod", "A bucket-brigade delay in the spirit of the 80s kit-built echoes: long or short chip, an op-amp preamp driving the repeats, clock filter and noise, dual-chip stereo and an oscillation limit. Drift lets the clock breathe and the tone wander.", ["BBD delay", "long / short chip", "8 presets"]],
+  ["ADPMod", "gfx-adpmod", "mod", "A dual-carrier ring modulator, audio-rate or sub-audio, with tape-style harmonic saturation, a tone filter and chaotic drift on frequency, drive and tone.", ["ring modulator", "dual carrier", "chaos drift"]],
+  ["Chopper", "gfx-chopper", "mod", "A stutter and gate sequencer for vocal chops and trance gating: 16 steps of thru, repeat, reverse or mute with ratchets, pitch-up and a filter per step, straight and triplet divisions, a momentary HOLD and MIDI keys that hold at each division.", ["16-step grid", "HOLD + MIDI triggers", "lime / magenta"]],
+  ["Dynatron", "gfx-dynatron", "mod", "A bubble-and-jet modulator after the classic two-tape-machine trick: flange, phase or a resonant filter, swept by an LFO, placed by hand, or driven by your playing (the harder you play, the further it goes).", ["flange / phase / filter", "envelope sweep", "10 presets"]],
+  ["Echomax", "gfx-echomax", "mod", "One echo with four characters &mdash; tape, bucket-brigade, digital and Echorder &mdash; with tempo sync, ping-pong, freeze, ducking, wow and flutter and a vintage EQ.", ["4 echo types", "sync + ping-pong", "freeze + duck"]],
+  ["Mod Rack", "gfx-modrack", "mod", "Four modules in parallel &mdash; tremolo, chorus, vibe and delay &mdash; each with a circuit-bend mod pot, tempo sync and L / C / R outputs.", ["4 parallel FX", "circuit-bend pots", "L / C / R"]],
+  // mastering
+  ["MasterSuite", "gfx-mastersuite", "mast", "A seven-stage mastering strip: oversampling, valve saturation and tone, mid/side width and mono bass, vari-mu compression, a high-frequency limiter, a clipper and a true-peak limiter.", ["7 stages", "oversampled", "true-peak limiter"]],
+  ["Optimiser", "gfx-optimiser", "mast", "A broadcast-style loudness chain, now with a phase rotator, band coupling, an HF limiter and a FIZZ exciter: slow gain riding, a phase-coherent four-band compressor that sets the sound, a soft clipper and a brickwall limiter. It opens flat, so you dial in only as much as you want.", ["AGC", "4-band", "loudness"]],
+  ["Master EQ", "gfx-master-eq", "mast", "A mastering EQ with gentle shelves, air, and three dynamic bands, each with one soft-knee COMP knob: turn left to compress, right to expand. Stereo, mid or side per band.", ["3 dynamic bands", "one-knob dynamics", "mid / side"]],
+  ["Aureus", "gfx-aureus", "mast", "A golden-ratio four-band processor: decadic crossovers picked from Fibonacci frequencies, and in every band an EQ, a drive stage and a compressor (opto, VCA or a gentle three-stage), all summing back flat. Gold or petrol-teal faceplate.", ["4 bands", "EQ + drive + comp", "phi timings"]],
+  ["PM76", "gfx-pm76", "mast", "Transparent mastering dynamics: true upward compression that lifts only the quiet detail, never the peaks, with a floor so silence stays silent.", ["upward compression", "mastering", "transparent"]],
+  ["Quad22", "gfx-quad22", "mast", "A four-band compander, saturator and EQ strip with phase-coherent splits at 80 Hz, 3 kHz and 9 kHz: saturation, EQ and a one-knob compander in every band.", ["4 bands", "compander", "phase-coherent"]],
+  ["M-Sum", "gfx-m-sum", "sum", "An eight-stem analogue summing bus in the spirit of an 80s broadcast console: route stems to one 16-channel track and they are summed with power-rail sag and bus crosstalk, through the output transformer's iron and a fast VCA bus compressor. Level, solo and mute per stem.", ["8 stereo stems", "rail sag + iron", "VCA bus comp"]],
+  ["Cassette 4", "gfx-cassette-4", "sum", "A cassette four-track as a summing mixer: four stems each go to their own track of tape and are mixed down on the little mixer. Two machines - a standard-speed compact with B-type noise reduction, and a double-speed one whose compander noise reduction breathes - with drive, wow, hiss and age.", ["4 tape tracks", "2 models", "compander NR"]],
+  ["Compact 12", "gfx-compact-12", "sum", "The little 12-channel project-studio desk as a summing mixer: four mono channels with 3-band EQ and pan, four stereo pairs with 2-band EQ and balance, solo and mute on every channel - clean and honest, with a HOT switch for the gritty edge of its summing amps run into the rails.", ["4 mono + 4 stereo", "HOT drive", "desk noise"]],
+  ["Stage 8", "gfx-stage-8", "sum", "A big theatre console's mix bus: eight stereo stems with pan, solo and mute, two VCA group masters, and a VINTAGE / MODERN switch - transformer-coupled warmth with a silky top, or the later transformerless clarity with enormous headroom.", ["8 stems", "2 VCA groups", "vintage / modern"]],
+  ["Lustre", "gfx-lustre", "sum", "A silky transformer-coupled console bus: eight stereo stems summed through iron that works in the low mids, a COLOUR control from even to odd harmonics, a broad AIR lift and low-mid WEIGHT - smooth, wide and expensive-sounding.", ["8 stems", "even / odd colour", "air + weight"]],
+];
+
+// ---------- build the page ----------
+document.querySelectorAll(".js-repo").forEach(a => a.href = REPO);
+document.querySelectorAll(".js-zip").forEach(a => {
+  a.href = ZIP;
+  a.addEventListener("click", () => document.querySelector(".thanks").classList.add("on"));
+});
+document.querySelector(".js-count").textContent = P.length;
+
+const grid = document.querySelector(".grid");
+const esc = s => s;      // descriptions are written here, not user input
+for (const [name, file, cat, desc, hl] of P) {
+  const c = CATS[cat];
+  const el = document.createElement("article");
+  el.className = "card"; el.dataset.cat = cat; el.style.setProperty("--cat", c.col);
+  el.innerHTML =
+    `<button class="shot" aria-label="Show the ${name} panel full size"><img loading="lazy" src="img/${file}.webp" alt="The ${name} panel"></button>
+     <div class="body">
+       <h3>${name}<span class="tag">${c.name}</span></h3>
+       <p>${esc(desc)}</p>
+       <ul>${hl.map(h => `<li>${h}</li>`).join("")}</ul>
+       <div class="foot"><span class="file">${file}.jsfx</span>${MANUALS.includes(file) ? `<a class="man" href="manual/${file}.html">Manual</a>` : ""}</div>
+     </div>`;
+  grid.appendChild(el);
+}
+
+// filters
+const bar = document.querySelector(".filters");
+const keys = ["all", ...Object.keys(CATS)];
+for (const k of keys) {
+  const n = k === "all" ? P.length : P.filter(p => p[2] === k).length;
+  const b = document.createElement("button");
+  b.type = "button"; b.dataset.k = k; b.setAttribute("aria-pressed", k === "all");
+  b.innerHTML = `${k === "all" ? "All" : CATS[k].name}<span>${n}</span>`;
+  b.addEventListener("click", () => {
+    bar.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b));
+    grid.querySelectorAll(".card").forEach(card => card.hidden = !(k === "all" || card.dataset.cat === k));
+  });
+  bar.appendChild(b);
+}
+
+// lightbox
+const lb = document.querySelector(".lb"), lbImg = lb.querySelector("img"), lbCap = lb.querySelector("p");
+grid.addEventListener("click", e => {
+  const shot = e.target.closest(".shot"); if (!shot) return;
+  const img = shot.querySelector("img");
+  lbImg.src = img.src; lbImg.alt = img.alt; lbCap.textContent = shot.closest(".card").querySelector("h3").firstChild.textContent;
+  lb.classList.add("open");
+});
+lb.addEventListener("click", () => lb.classList.remove("open"));
+document.addEventListener("keydown", e => { if (e.key === "Escape") lb.classList.remove("open"); });
+</script>
+<script src="https://storage.ko-fi.com/cdn/scripts/overlay-widget.js"></script>
+<script>
+  if (window.kofiWidgetOverlay) kofiWidgetOverlay.draw("jgwizrad", {
+    "type": "floating-chat",
+    "floating-chat.donateButton.text": "Donate",
+    "floating-chat.donateButton.background-color": "#5bc0de",
+    "floating-chat.donateButton.text-color": "#323842"
+  });
+</script>
+</body>
+</html>

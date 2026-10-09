@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GFX Mastering at a glance</title><meta name="description" content="GFX plug-ins compared at a glance.">
+<style>
+:root{--bg:#0e0f11;--panel:#1b1d21;--panel-2:#23262b;--line:#2f3238;--ink:#e9e7e2;--ink-2:#b4b2ad;--ink-3:#85837e;--accent:#e0603a;--accent-2:#e8b23a}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Trebuchet MS","Segoe UI",system-ui,-apple-system,sans-serif}
+a{color:var(--accent-2)}.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+.top{position:sticky;top:0;z-index:5;background:rgba(14,15,17,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:12px;height:56px}
+.badge{width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--panel);display:grid;place-items:center;font-weight:700;font-size:10px;flex:none}
+.top a.home{color:var(--ink);text-decoration:none;font-weight:700;letter-spacing:1px}
+.top nav{margin-left:auto;display:flex;gap:16px;font-size:14px;flex-wrap:wrap}.top nav a{color:var(--ink-2);text-decoration:none}
+h1{font-size:clamp(28px,5vw,40px);margin:28px 0 6px}
+.lead{color:var(--ink-2);font-size:17px;margin:0 0 18px;max-width:760px}
+.cats{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px}
+.cats a{font-size:14px;color:var(--ink-2);background:var(--panel);border:1px solid var(--line);padding:6px 12px;border-radius:999px;text-decoration:none}
+.cats a.on{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+.tbl{width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.tbl th{background:var(--panel-2);text-align:left;font-size:13px;letter-spacing:.4px;text-transform:uppercase;color:var(--ink-3);padding:10px 14px}
+.tbl td{background:var(--panel);border-top:1px solid var(--line);padding:12px 14px;vertical-align:top;color:var(--ink-2);font-size:15px}
+.tbl td.n{width:230px}.tbl td.n img{display:block;width:210px;max-width:100%;height:auto;border-radius:6px;border:1px solid var(--line);background:#0b0c0d;margin-bottom:8px}
+.tbl td.n b{display:block;color:var(--ink);font-size:17px}.tbl td.n a{text-decoration:none}.tbl td.n span{font-size:13px}
+.tbl ul{margin:0;padding-left:18px}.tbl li{margin:0 0 2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:14px}
+.grid a{display:block;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;text-decoration:none;color:var(--ink)}
+.grid a b{font-size:18px}.grid a p{color:var(--ink-2);margin:6px 0 0;font-size:15px}.grid a span{color:var(--ink-3);font-size:13px}
+footer{border-top:1px solid var(--line);margin-top:40px;padding:24px 0 40px;color:var(--ink-3);font-size:14px}
+@media (max-width:760px){.tbl thead{display:none}.tbl tr,.tbl td{display:block;width:auto!important}.tbl td{border-top:0}.tbl tr{border-top:1px solid var(--line)}}
+</style></head><body>
+<header class="top"><div class="wrap"><span class="badge">GFX</span><a class="home" href="../index.html">GFX</a>
+<nav><a href="index.html">At a glance</a><a href="../manual/index.html">Manuals</a><a href="../index.html#range">The range</a><a href="../index.html#install">Install</a></nav></div></header>
+<main class="wrap"><h1>Mastering at a glance</h1><p class="lead">Finishing tools for the stereo mix: a mastering strip, a loudness chain and a dynamic EQ. Click a plug-in for its manual or panel.</p><div class="cats"><a href="instruments.html">Instruments</a><a href="drum-machines.html">Drum machines</a><a href="amps.html">Amps &amp; drive</a><a href="dynamics.html">Dynamics</a><a href="eq.html">EQ &amp; filters</a><a href="modulation.html">Modulation &amp; space</a><a href="mastering.html" class=on>Mastering</a><a href="summing.html">Summing</a></div><table class="tbl"><thead><tr><th>Plug-in</th><th>In the spirit of</th><th>Main features</th><th>Best for</th></tr></thead><tbody><tr><td class="n"><a href="../img/gfx-mastersuite.webp"><img src="../img/gfx-mastersuite.webp" alt="MasterSuite" loading="lazy"><b>MasterSuite</b><span>Panel</span></a></td><td>Modular mastering strips</td><td><ul><li>Valve saturation and tone, stereo tools</li><li>Vari-mu compressor, HF limiter</li><li>Clipper and true-peak limiter</li></ul></td><td>A complete mastering chain</td></tr><tr><td class="n"><a href="../img/gfx-optimiser.webp"><img src="../img/gfx-optimiser.webp" alt="Optimiser" loading="lazy"><b>Optimiser</b><span>Panel</span></a></td><td>Broadcast loudness processors</td><td><ul><li>Slow AGC</li><li>Phase-coherent 4-band compressor</li><li>Soft clipper and brickwall limiter</li></ul></td><td>Loud, consistent finished mixes</td></tr><tr><td class="n"><a href="../img/gfx-master-eq.webp"><img src="../img/gfx-master-eq.webp" alt="Master EQ" loading="lazy"><b>Master EQ</b><span>Panel</span></a></td><td>Mastering EQs with dynamic bands</td><td><ul><li>Gentle shelves and air</li><li>Three dynamic bands with one-knob compress / expand</li><li>Stereo, mid or side per band</li></ul></td><td>Final tonal balance that reacts to the music</td></tr><tr><td class="n"><a href="../img/gfx-aureus.webp"><img src="../img/gfx-aureus.webp" alt="Aureus" loading="lazy"><b>Aureus</b><span>Panel</span></a></td><td>Golden-ratio multiband processing</td><td><ul><li>Fibonacci crossovers, flat sum</li><li>EQ, drive and compressor per band</li><li>Phi timings, gold or teal</li></ul></td><td>Bus and master glue with colour</td></tr><tr><td class="n"><a href="../img/gfx-pm76.webp"><img src="../img/gfx-pm76.webp" alt="PM76" loading="lazy"><b>PM76</b><span>Panel</span></a></td><td>Boutique mastering dynamics</td><td><ul><li>True upward compression</li><li>Floor keeps silence silent</li><li>Transparent</li></ul></td><td>Bringing up quiet detail</td></tr><tr><td class="n"><a href="../img/gfx-quad22.webp"><img src="../img/gfx-quad22.webp" alt="Quad22" loading="lazy"><b>Quad22</b><span>Panel</span></a></td><td>Studio noise-reduction companders</td><td><ul><li>Splits at 80 Hz / 3 kHz / 9 kHz</li><li>Saturation, EQ, compander per band</li><li>Phase-coherent</li></ul></td><td>Bus colour and density</td></tr></tbody></table></main>
+<footer><div class="wrap">GFX (Garden FX) - free JSFX plug-ins for REAPER.</div></footer></body></html>
